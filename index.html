@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pustaka Digital — Toko Buku Online</title>
+  <meta name="description" content="Toko buku online terlengkap. E-book, buku cerita bergambar, flipbook, dan audiobook dari penerbit terbaik Indonesia.">
+  <meta property="og:title" content="Pustaka Digital — Toko Buku Online">
+  <meta property="og:description" content="Ribuan e-book, buku cerita bergambar, flipbook, dan audiobook dari penerbit terbaik Indonesia.">
+  <meta property="og:type" content="website">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1b4332',
+            'primary-light': '#2d6a4f',
+            accent: '#c8873e',
+            'accent-light': '#daa45e',
+            cream: '#f8f5f0',
+            'cream-dark': '#ede8df',
+            warm: '#8b8578',
+          },
+          fontFamily: {
+            display: ['Playfair Display', 'serif'],
+            body: ['DM Sans', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: #f8f5f0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.025) 1px, transparent 0);
+      background-size: 20px 20px;
+    }
+    .font-display { font-family: 'Playfair Display', serif; }
+    .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #c8c0b4; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #a89e90; }
+    @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+    @keyframes slideOutRight { from { transform: translateX(0); } to { transform: translateX(100%); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    @keyframes toastIn { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes toastOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(100px); } }
+    @keyframes float1 { 0%,100% { transform: translate(0,0) rotate(0deg); } 50% { transform: translate(20px,-30px) rotate(10deg); } }
+    @keyframes float2 { 0%,100% { transform: translate(0,0) rotate(0deg); } 50% { transform: translate(-25px,20px) rotate(-8deg); } }
+    @keyframes float3 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(15px,15px); } }
+    @keyframes popIn { 0% { transform: scale(0); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+    @keyframes checkDraw { to { stroke-dashoffset: 0; } }
+    .cart-open { animation: slideInRight 0.35s ease-out forwards; }
+    .cart-close { animation: slideOutRight 0.3s ease-in forwards; }
+    .modal-overlay { animation: fadeIn 0.25s ease-out; }
+    .modal-content { animation: scaleIn 0.3s ease-out; }
+    .toast-in { animation: toastIn 0.4s ease-out forwards; }
+    .toast-out { animation: toastOut 0.3s ease-in forwards; }
+    .float-1 { animation: float1 8s ease-in-out infinite; }
+    .float-2 { animation: float2 10s ease-in-out infinite; }
+    .float-3 { animation: float3 6s ease-in-out infinite; }
+    .pop-in { animation: popIn 0.4s ease-out; }
+    .card-product { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .card-product:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(27,67,50,0.12); }
+    .tab-active { background: #1b4332; color: white; box-shadow: 0 4px 12px rgba(27,67,50,0.3); }
+    .step-done { background: #1b4332; color: white; }
+    .step-active { background: #c8873e; color: white; box-shadow: 0 0 0 4px rgba(200,135,62,0.25); }
+    .step-pending { background: #ede8df; color: #8b8578; }
+    .radio-card { transition: all 0.2s ease; cursor: pointer; }
+    .radio-card:hover { border-color: #2d6a4f; background: rgba(27,67,50,0.03); }
+    .radio-card.selected { border-color: #1b4332; background: rgba(27,67,50,0.06); }
+    .radio-card.selected .radio-dot { background: #1b4332; box-shadow: inset 0 0 0 3px white; }
+    .field-input { transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+    .field-input:focus { border-color: #1b4332; box-shadow: 0 0 0 3px rgba(27,67,50,0.1); outline: none; }
+    .field-input.has-error { border-color: #ef4444; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body class="text-gray-900 min-h-screen">
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-lg border-b border-cream-dark shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-4">
+      <a href="#" class="flex items-center gap-2 flex-shrink-0" onclick="location.reload()">
+        <div class="w-9 h-9 bg-primary rounded-xl flex items-center justify-center">
+          <i class="fas fa-book-open text-white text-sm"></i>
+        </div>
+        <span class="font-display font-bold text-lg text-primary hidden sm:block">Pustaka Digital</span>
+      </a>
+      <div class="flex-1 max-w-xl relative">
+        <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-warm text-sm"></i>
+        <input id="searchInput" type="text" placeholder="Cari judul atau penulis..." class="w-full pl-10 pr-4 py-2.5 bg-cream rounded-xl text-sm field-input border border-transparent focus:border-primary" oninput="handleSearch(this.value)">
+      </div>
+      <button onclick="toggleCart()" class="relative w-10 h-10 rounded-xl bg-cream hover:bg-cream-dark flex items-center justify-center transition-colors" aria-label="Keranjang belanja">
+        <i class="fas fa-shopping-bag text-primary"></i>
+        <span id="cartCount" class="absolute -top-1 -right-1 w-5 h-5 bg-accent text-white text-[10px] font-bold rounded-full items-center justify-center hidden pop-in">0</span>
+      </button>
+    </div>
+  </header>
+  <main>
+    <section class="relative overflow-hidden bg-gradient-to-br from-primary via-primary-light to-emerald-800 py-16 md:py-24">
+      <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="float-1 absolute top-10 left-[10%] w-32 h-32 bg-white/5 rounded-full blur-xl"></div>
+        <div class="float-2 absolute bottom-10 right-[15%] w-48 h-48 bg-accent/10 rounded-full blur-2xl"></div>
+        <div class="float-3 absolute top-1/2 left-1/2 w-24 h-24 bg-white/5 rounded-full blur-lg"></div>
+      </div>
+      <div class="relative max-w-7xl mx-auto px-4 text-center">
+        <p class="text-accent-light font-medium text-sm tracking-widest uppercase mb-3">Toko Buku Online Terlengkap</p>
+        <h1 class="font-display text-4xl md:text-6xl lg:text-7xl font-900 text-white mb-5 leading-tight">Jelajahi Dunia<br>Lewat Halaman</h1>
+        <p class="text-emerald-100/80 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">Ribuan e-book, buku cerita bergambar, flipbook, dan audiobook dari penerbit terbaik Indonesia</p>
+        <div class="flex flex-wrap justify-center gap-8 md:gap-14">
+          <div class="text-center"><p class="text-3xl md:text-4xl font-bold text-white">12K+</p><p class="text-emerald-200/70 text-sm mt-1">Judul Buku</p></div>
+          <div class="text-center"><p class="text-3xl md:text-4xl font-bold text-white">500+</p><p class="text-emerald-200/70 text-sm mt-1">Penerbit</p></div>
+          <div class="text-center"><p class="text-3xl md:text-4xl font-bold text-white">50K+</p><p class="text-emerald-200/70 text-sm mt-1">Pembaca</p></div>
+        </div>
+      </div>
+    </section>
+    <section class="max-w-7xl mx-auto px-4 py-10 md:py-14">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <h2 class="font-display text-2xl md:text-3xl font-bold text-primary">Koleksi Buku</h2>
+        <div class="flex flex-wrap gap-2" id="categoryTabs"></div>
+      </div>
+      <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"></div>
+    </section>
+  </main>
+  <div id="cartOverlay" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/40" onclick="toggleCart()"></div>
+    <aside id="cartPanel" class="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl flex flex-col">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-cream-dark">
+        <h3 class="font-display font-bold text-lg">Keranjang Belanja</h3>
+        <button onclick="toggleCart()" class="w-8 h-8 rounded-lg hover:bg-cream flex items-center justify-center transition-colors" aria-label="Tutup keranjang"><i class="fas fa-times text-warm"></i></button>
+      </div>
+      <div id="cartItems" class="flex-1 overflow-y-auto px-5"></div>
+      <div class="border-t border-cream-dark px-5 py-4">
+        <div class="flex justify-between items-center mb-4">
+          <span class="text-warm font-medium">Total</span>
+          <span id="cartTotal" class="text-xl font-bold text-primary">Rp 0</span>
+        </div>
+        <button id="checkoutBtn" onclick="openCheckout()" class="w-full py-3 bg-primary hover:bg-primary-light text-white font-semibold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+          <i class="fas fa-lock mr-2 text-sm"></i>Checkout
+        </button>
+        <button onclick="toggleCart()" class="w-full py-2.5 mt-2 text-warm hover:text-primary font-medium text-sm transition-colors">Lanjut Belanja</button>
+      </div>
+    </aside>
+  </div>
+  <div id="checkoutOverlay" class="fixed inset-0 z-[60] hidden">
+    <div class="modal-overlay absolute inset-0 bg-black/50" onclick="closeCheckout()"></div>
+    <div class="modal-content absolute inset-4 md:inset-8 lg:inset-12 bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-cream-dark flex-shrink-0">
+        <h3 class="font-display font-bold text-lg">Checkout</h3>
+        <button onclick="closeCheckout()" class="w-8 h-8 rounded-lg hover:bg-cream flex items-center justify-center transition-colors" aria-label="Tutup checkout"><i class="fas fa-times text-warm"></i></button>
+      </div>
+      <div id="checkoutProgress" class="px-6 pt-4 flex-shrink-0"></div>
+      <div id="checkoutContent" class="flex-1 overflow-y-auto"></div>
+    </div>
+  </div>
+  <div id="toastContainer" class="fixed bottom-6 right-6 z-[70] flex flex-col gap-2 items-end"></div>
+  <footer class="bg-primary text-emerald-100/70 mt-12">
+    <div class="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div>
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center"><i class="fas fa-book-open text-accent-light text-sm"></i></div>
+          <span class="font-display font-bold text-white">Pustaka Digital</span>
+        </div>
+        <p class="text-sm leading-relaxed">Platform toko buku online terlengkap di Indonesia. Temukan e-book, buku cerita bergambar, flipbook, dan audiobook favorit Anda.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-white mb-3">Kategori</h4>
+        <ul class="space-y-2 text-sm">
+          <li><a href="#" onclick="setCategory('ebook')" class="hover:text-white transition-colors">E-book</a></li>
+          <li><a href="#" onclick="setCategory('picture')" class="hover:text-white transition-colors">Buku Cerita Bergambar</a></li>
+          <li><a href="#" onclick="setCategory('flipbook')" class="hover:text-white transition-colors">Flipbook</a></li>
+          <li><a href="#" onclick="setCategory('audiobook')" class="hover:text-white transition-colors">Audiobook</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold text-white mb-3">Pembayaran</h4>
+        <div class="flex flex-wrap gap-2 text-xs">
+          <span class="px-2.5 py-1 bg-white/10 rounded-md">BCA VA</span>
+          <span class="px-2.5 py-1 bg-white/10 rounded-md">BNI VA</span>
+          <span class="px-2.5 py-1 bg-white/10 rounded-md">Mandiri VA</span>
+          <span class="px-2.5 py-1 bg-white/10 rounded-md">BRI VA</span>
+          <span class="px-2.5 py-1 bg-white/10 rounded-md">GoPay</span>
+          <span class="px-2.5 py-1 bg-white/10 rounded-md">OVO</span>
+          <span class="px-2.5 py-1 bg-white/10 rounded-md">DANA</span>
+          <span class="px-2.5 py-1 bg-white/10 rounded-md">ShopeePay</span>
+        </div>
+        <h4 class="font-semibold text-white mt-5 mb-3">Pengiriman</h4>
+        <div class="flex flex-wrap gap-2 text-xs">
+          <span class="px-2.5 py-1 bg-white/10 rounded-md">JNE</span>
+          <span class="px-2.5 py-1 bg-white/10 rounded-md">J&T Express</span>
+          <span class="px-2.5 py-1 bg-white/10 rounded-md">SiCepat</span>
+          <span class="px-2.5 py-1 bg-white/10 rounded-md">AnterAja</span>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-white/10 py-4 text-center text-xs text-emerald-200/50">
+      &copy; 2025 Pustaka Digital. Semua hak dilindungi.
+    </div>
+  </footer>
+<script>
+var products = [
+  { id:1, title:'Hujan', author:'Tere Liye', price:65000, category:'ebook', type:'digital', image:'https://picsum.photos/seed/novelhujan/300/420', rating:4.8, sold:12400, badge:'Bestseller', desc:'Novel tentang perjuangan dan cinta di tengah badai kehidupan yang tak terduga.' },
+  { id:2, title:'Laut Bercerita', author:'Leila S. Chudori', price:78000, category:'ebook', type:'digital', image:'https://picsum.photos/seed/lautbercerita/300/420', rating:4.9, sold:8900, badge:'Terlaris', desc:'Kisah heroik para aktivis yang hilang ditelan rezim Orde Baru.' },
+  { id:3, title:'Bumi Manusia', author:'Pramoedya Ananta Toer', price:89000, category:'ebook', type:'digital', image:'https://picsum.photos/seed/bumimanusia/300/420', rating:4.9, sold:25000, badge:'Klasik', desc:'Tetralogi Buru pertama yang menggugah kesadaran bangsa Indonesia.' },
+  { id:4, title:'Filosofi Teras', author:'Henry Manampiring', price:72000, category:'ebook', type:'digital', image:'https://picsum.photos/seed/filosofiteras/300/420', rating:4.7, sold:18000, badge:'Bestseller', desc:'Filsafat Stoa untuk menjawab kepusingan hidup manusia modern.' },
+  { id:5, title:'Sang Pemimpi', author:'Andrea Hirata', price:95000, category:'picture', type:'physical', image:'https://picsum.photos/seed/sangpemimpi/300/420', rating:4.8, sold:7600, badge:'', desc:'Kelanjutan petualangan Ikal dan Arai yang menginspirasi jutaan orang.' },
+  { id:6, title:'Negeri 5 Menara', author:'Ahmad Fuadi', price:88000, category:'picture', type:'physical', image:'https://picsum.photos/seed/negerimenara/300/420', rating:4.7, sold:6200, badge:'Baru', desc:'Kisah persahabatan dan mimpi besar di pesantren Madani.' },
+  { id:7, title:'Perahu Kertas', author:'Dee Lestari', price:92000, category:'picture', type:'physical', image:'https://picsum.photos/seed/perahukertas/300/420', rating:4.6, sold:5400, badge:'', desc:'Romansa dua jiwa kreatif yang saling mencari jati diri.' },
+  { id:8, title:'Ronggeng Dukuh Paruk', author:'Ahmad Tohari', price:85000, category:'picture', type:'physical', image:'https://picsum.photos/seed/ronggengdukuh/300/420', rating:4.8, sold:4800, badge:'Klasik', desc:'Trilogi tentang kehidupan Srintil sang ronggeng yang memukau.' },
+  { id:9, title:'Atlas Sejarah Indonesia', author:'Tim Historia', price:150000, category:'flipbook', type:'physical', image:'https://picsum.photos/seed/atlasindo/300/420', rating:4.9, sold:3200, badge:'Premium', desc:'Perjalanan panjang bangsa Indonesia dalam visual yang memukau.' },
+  { id:10, title:'Ensiklopedia Anak Cerdas', author:'Penerbit Gramedia', price:120000, category:'flipbook', type:'physical', image:'https://picsum.photos/seed/ensiklopediaanak/300/420', rating:4.5, sold:4100, badge:'', desc:'Pengetahuan umum lengkap untuk anak usia 6 hingga 12 tahun.' },
+  { id:11, title:'Cerita Rakyat Nusantara', author:'Berbagai Pengarang', price:135000, category:'flipbook', type:'physical', image:'https://picsum.photos/seed/ceritarakyat/300/420', rating:4.7, sold:2800, badge:'Baru', desc:'Kumpulan legenda dan dongeng dari 34 provinsi Indonesia.' },
+  { id:12, title:'Dunia Hewan Interaktif', author:'Tim NatGeo', price:145000, category:'flipbook', type:'physical', image:'https://picsum.photos/seed/duniahewan/300/420', rating:4.6, sold:3500, badge:'', desc:'Flipbook interaktif dengan fakta menarik tentang fauna dunia.' },
+  { id:13, title:'Laskar Pelangi', author:'Andrea Hirata', price:55000, category:'audiobook', type:'digital', image:'https://picsum.photos/seed/laskarpelangi/300/420', rating:4.9, sold:9200, badge:'Bestseller', desc:'Audiobook ikonik tentang semangat belajar anak-anak Belitung.' },
+  { id:14, title:'Cantik Itu Luka', author:'Eka Kurniawan', price:62000, category:'audiobook', type:'digital', image:'https://picsum.photos/seed/cantikituluka/300/420', rating:4.8, sold:5600, badge:'', desc:'Realisme magis yang membawa pendengar ke era kolonial Indonesia.' },
+  { id:15, title:'Pulang', author:'Tere Liye', price:48000, category:'audiobook', type:'digital', image:'https://picsum.photos/seed/pulangtere/300/420', rating:4.6, sold:7100, badge:'', desc:'Kisah perjalanan pulang yang penuh makna dan kejutan.' },
+  { id:16, title:'Sapiens', author:'Yuval Noah Harari', price:85000, category:'audiobook', type:'digital', image:'https://picsum.photos/seed/sapiensbook/300/420', rating:4.9, sold:11200, badge:'Terlaris', desc:'Sejarah singkat umat manusia dalam narasi audiobook yang memukau.' }
+];
+var categories = [
+  { id:'all', label:'Semua', icon:'fa-layer-group' },
+  { id:'ebook', label:'E-book', icon:'fa-file-pdf' },
+  { id:'picture', label:'Buku Cerita Bergambar', icon:'fa-image' },
+  { id:'flipbook', label:'Flipbook', icon:'fa-book' },
+  { id:'audiobook', label:'Audiobook', icon:'fa-headphones' }
+];
+var couriers = [
+  { id:'jne_reg', name:'JNE Reguler', est:'2-3 hari', cost:18000 },
+  { id:'jne_yes', name:'JNE YES', est:'1 hari', cost:28000 },
+  { id:'jt_exp', name:'J&T Express', est:'2-3 hari', cost:15000 },
+  { id:'sicepat', name:'SiCepat REG', est:'1-2 hari', cost:12000 },
+  { id:'anteraja', name:'AnterAja', est:'2-3 hari', cost:10000 }
+];
+var vaMethods = [
+  { id:'bca', name:'BCA Virtual Account', color:'#003d79' },
+  { id:'bni', name:'BNI Virtual Account', color:'#f15a22' },
+  { id:'mandiri', name:'Mandiri Virtual Account', color:'#003876' },
+  { id:'bri', name:'BRI Virtual Account', color:'#00529c' }
+];
+var ewalletMethods = [
+  { id:'gopay', name:'GoPay', color:'#00aed6' },
+  { id:'ovo', name:'OVO', color:'#4c3494' },
+  { id:'dana', name:'DANA', color:'#108ee9' },
+  { id:'shopeepay', name:'ShopeePay', color:'#ee4d2d' }
+];
+var cart = [];
+var activeCategory = 'all';
+var searchQuery = '';
+var cartOpen = false;
+var checkoutStep = 1;
+var orderNumber = '';
+var vaNumber = '';
+var form = { name:'', phone:'', address:'', city:'', postal:'', courier:'', email:'', payType:'', payMethod:'' };
+
+function formatRupiah(n) { return 'Rp ' + n.toLocaleString('id-ID'); }
+function formatSold(n) { if (n >= 1000) return (n/1000).toFixed(n%1000===0?0:1) + 'rb terjual'; return n + ' terjual'; }
+function getFiltered() { return products.filter(function(p) { var catMatch = activeCategory === 'all' || p.category === activeCategory; var q = searchQuery.toLowerCase(); var searchMatch = !q || p.title.toLowerCase().indexOf(q) !== -1 || p.author.toLowerCase().indexOf(q) !== -1; return catMatch && searchMatch; }); }
+function cartHasPhysical() { return cart.some(function(i) { return i.type === 'physical'; }); }
+function cartHasDigital() { return cart.some(function(i) { return i.type === 'digital'; }); }
+function getSubtotal() { return cart.reduce(function(s,i) { return s + i.price * i.qty; }, 0); }
+function getShippingCost() { if (!form.courier) return 0; var c = couriers.find(function(x) { return x.id === form.courier; }); return c ? c.cost : 0; }
+function getTotal() { return getSubtotal() + getShippingCost(); }
+function generateOrderNum() { return 'PD-' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2,5).toUpperCase(); }
+function generateVA(bank) { var pfx = { bca:'8800', bni:'8001', mandiri:'8900', bri:'1088' }; var n = pfx[bank] || '8800'; for (var i=0; i<10; i++) n += Math.floor(Math.random()*10); return n; }
+
+function renderCategories() {
+  var el = document.getElementById('categoryTabs');
+  el.innerHTML = categories.map(function(c) {
+    return '<button onclick="setCategory(\'' + c.id + '\')" class="px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-cream-dark transition-all ' + (activeCategory===c.id ? 'tab-active border-primary' : 'bg-white text-warm hover:border-primary/30 hover:text-primary') + '"><i class="fas ' + c.icon + ' text-[10px]"></i><span class="hidden sm:inline">' + c.label + '</span><span class="sm:hidden">' + c.label.split(' ')[0] + '</span></button>';
+  }).join('');
+}
+function setCategory(id) { activeCategory = id; renderCategories(); renderProducts(); document.getElementById('productGrid').scrollIntoView({ behavior:'smooth', block:'start' }); }
+
+function renderProducts() {
+  var grid = document.getElementById('productGrid');
+  var list = getFiltered();
+  if (!list.length) { grid.innerHTML = '<div class="col-span-full text-center py-20"><i class="fas fa-search text-4xl text-cream-dark mb-4"></i><p class="text-warm font-medium">Tidak ada buku ditemukan</p><p class="text-sm text-warm/70 mt-1">Coba kata kunci lain atau ubah kategori</p></div>'; return; }
+  grid.innerHTML = list.map(function(p) {
+    return '<article class="card-product bg-white rounded-2xl shadow-sm overflow-hidden group"><div class="relative aspect-[3/4] overflow-hidden bg-cream-dark"><img src="' + p.image + '" alt="' + p.title + '" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">' + (p.badge ? '<span class="absolute top-2.5 left-2.5 bg-accent text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow">' + p.badge + '</span>' : '') + '<span class="absolute top-2.5 right-2.5 ' + (p.type==='digital'?'bg-emerald-500':'bg-orange-500') + ' text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider shadow">' + (p.type==='digital'?'Digital':'Fisik') + '</span><button onclick="addToCart(' + p.id + ')" class="absolute bottom-2.5 right-2.5 bg-primary hover:bg-primary-light text-white w-9 h-9 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 shadow-lg active:scale-90" aria-label="Tambah ke keranjang"><i class="fas fa-cart-plus text-sm"></i></button></div><div class="p-3 md:p-4"><h3 class="font-display font-bold text-sm md:text-base leading-snug line-clamp-2 mb-1">' + p.title + '</h3><p class="text-warm text-xs md:text-sm mb-1.5">' + p.author + '</p><div class="flex items-center gap-1 mb-2"><i class="fas fa-star text-amber-400 text-[10px]"></i><span class="text-[11px] text-warm">' + p.rating + ' &middot; ' + formatSold(p.sold) + '</span></div><p class="text-primary font-bold text-sm md:text-lg">' + formatRupiah(p.price) + '</p></div></article>';
+  }).join('');
+}
+
+function addToCart(id) {
+  var p = products.find(function(x) { return x.id === id; });
+  var existing = cart.find(function(i) { return i.id === id; });
+  if (existing) { existing.qty++; } else { cart.push({ id:p.id, title:p.title, author:p.author, price:p.price, image:p.image, type:p.type, qty:1 }); }
+  updateCartUI();
+  showToast('"' + p.title + '" ditambahkan ke keranjang', 'success');
+}
+function removeFromCart(id) { cart = cart.filter(function(i) { return i.id !== id; }); updateCartUI(); if (!cart.length && cartOpen) toggleCart(); }
+function updateQty(id, delta) { var item = cart.find(function(i) { return i.id === id; }); if (!item) return; item.qty += delta; if (item.qty <= 0) { removeFromCart(id); return; } updateCartUI(); }
+function updateCartUI() {
+  var countEl = document.getElementById('cartCount');
+  var total = cart.reduce(function(s,i) { return s + i.qty; }, 0);
+  countEl.textContent = total;
+  countEl.style.display = total > 0 ? 'flex' : 'none';
+  if (total > 0) { countEl.classList.remove('pop-in'); void countEl.offsetWidth; countEl.classList.add('pop-in'); }
+  renderCartItems();
+}
+function renderCartItems() {
+  var container = document.getElementById('cartItems');
+  var totalEl = document.getElementById('cartTotal');
+  var btn = document.getElementById('checkoutBtn');
+  totalEl.textContent = formatRupiah(getSubtotal());
+  if (!cart.length) { container.innerHTML = '<div class="flex flex-col items-center justify-center h-full text-warm py-16"><i class="fas fa-shopping-bag text-4xl mb-4 opacity-20"></i><p class="font-medium">Keranjang masih kosong</p><p class="text-sm mt-1 opacity-70">Yuk mulai belanja!</p></div>'; btn.disabled = true; return; }
+  btn.disabled = false;
+  container.innerHTML = cart.map(function(i) {
+    return '<div class="flex gap-3 py-3 border-b border-cream-dark last:border-0"><img src="' + i.image + '" alt="' + i.title + '" class="w-14 h-[72px] object-cover rounded-lg flex-shrink-0"><div class="flex-1 min-w-0"><h4 class="font-medium text-sm leading-tight line-clamp-2">' + i.title + '</h4><p class="text-[11px] text-warm mt-0.5">' + i.author + '</p><p class="text-primary font-bold text-sm mt-1">' + formatRupiah(i.price) + '</p><div class="flex items-center justify-between mt-1.5"><div class="flex items-center border border-cream-dark rounded-lg overflow-hidden"><button onclick="updateQty(' + i.id + ',-1)" class="w-6 h-6 flex items-center justify-center text-warm hover:bg-cream transition-colors text-xs"><i class="fas fa-minus" style="font-size:8px"></i></button><span class="w-7 h-6 flex items-center justify-center text-xs font-medium border-x border-cream-dark">' + i.qty + '</span><button onclick="updateQty(' + i.id + ',1)" class="w-6 h-6 flex items-center justify-center text-warm hover:bg-cream transition-colors text-xs"><i class="fas fa-plus" style="font-size:8px"></i></button></div><button onclick="removeFromCart(' + i.id + ')" class="text-red-400 hover:text-red-600 transition-colors p-1" aria-label="Hapus"><i class="fas fa-trash-alt text-xs"></i></button></div></div></div>';
+  }).join('');
+}
+function toggleCart() {
+  var overlay = document.getElementById('cartOverlay');
+  var panel = document.getElementById('cartPanel');
+  if (!cartOpen) { overlay.classList.remove('hidden'); panel.classList.remove('cart-close'); panel.classList.add('cart-open'); document.body.style.overflow = 'hidden'; cartOpen = true; }
+  else { panel.classList.remove('cart-open'); panel.classList.add('cart-close'); setTimeout(function() { overlay.classList.add('hidden'); document.body.style.overflow = ''; }, 300); cartOpen = false; }
+}
+
+function openCheckout() { if (!cart.length) return; if (cartOpen) toggleCart(); checkoutStep = 1; orderNumber = ''; vaNumber = ''; document.getElementById('checkoutOverlay').classList.remove('hidden'); document.body.style.overflow = 'hidden'; renderCheckout(); }
+function closeCheckout() { document.getElementById('checkoutOverlay').classList.add('hidden'); document.body.style.overflow = ''; }
+function renderCheckout() { renderCheckoutProgress(); var content = document.getElementById('checkoutContent'); var hp = cartHasPhysical(), hd = cartHasDigital(); if (checkoutStep === 1) content.innerHTML = renderStep1(); else if (checkoutStep === 2) content.innerHTML = renderStep2(hp, hd); else if (checkoutStep === 3) content.innerHTML = renderStep3(); else if (checkoutStep === 4) content.innerHTML = renderStep4(hp, hd); }
+function renderCheckoutProgress() {
+  var steps = ['Keranjang', 'Pengiriman', 'Pembayaran', 'Selesai'];
+  document.getElementById('checkoutProgress').innerHTML = '<div class="flex items-center justify-center gap-0">' + steps.map(function(s, i) {
+    var num = i + 1;
+    var cls = num < checkoutStep ? 'step-done' : num === checkoutStep ? 'step-active' : 'step-pending';
+    var icon = num < checkoutStep ? '<i class="fas fa-check text-[10px]"></i>' : String(num);
+    var line = i < 3 ? '<div class="w-8 sm:w-16 h-0.5 mx-2 ' + (num < checkoutStep ? 'bg-primary' : 'bg-cream-dark') + ' transition-colors rounded"></div>' : '';
+    return '<div class="flex items-center"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-full ' + cls + ' flex items-center justify-center text-xs font-bold transition-all">' + icon + '</div><span class="text-xs font-medium ' + (num <= checkoutStep ? 'text-primary' : 'text-warm') + ' hidden sm:block">' + s + '</span></div>' + line + '</div>';
+  }).join('') + '</div>';
+}
+
+function renderStep1() {
+  var items = cart.map(function(i) {
+    return '<tr class="border-b border-cream-dark"><td class="py-3 pr-3"><div class="flex gap-3"><img src="' + i.image + '" class="w-11 h-14 object-cover rounded-lg flex-shrink-0"><div class="min-w-0"><p class="text-sm font-medium line-clamp-1">' + i.title + '</p><p class="text-[11px] text-warm">' + i.author + '</p><span class="inline-block mt-1 text-[9px] font-bold px-1.5 py-0.5 rounded-full ' + (i.type==='digital'?'bg-emerald-100 text-emerald-700':'bg-orange-100 text-orange-700') + '">' + (i.type==='digital'?'Digital':'Fisik') + '</span></div></div></td><td class="py-3 text-center text-sm text-warm">' + i.qty + 'x</td><td class="py-3 text-right text-sm font-semibold">' + formatRupiah(i.price * i.qty) + '</td></tr>';
+  }).join('');
+  return '<div class="p-6"><h4 class="font-display font-bold text-lg mb-4">Tinjau Pesanan</h4><div class="overflow-x-auto"><table class="w-full text-left">' + items + '</table></div><div class="flex justify-end mt-4 pt-4 border-t border-cream-dark"><div class="text-right"><p class="text-sm text-warm">Subtotal</p><p class="text-xl font-bold text-primary">' + formatRupiah(getSubtotal()) + '</p></div></div><div class="flex justify-end mt-6"><button onclick="goStep(2)" class="px-8 py-3 bg-primary hover:bg-primary-light text-white font-semibold rounded-xl transition-colors">Lanjut ke Pengiriman <i class="fas fa-arrow-right ml-2 text-sm"></i></button></div></div>';
+}
+
+function renderStep2(hp, hd) {
+  var html = '<div class="p-6">';
+  if (hp) {
+    html += '<div class="mb-6"><div class="flex items-center gap-2 mb-4"><i class="fas fa-truck text-primary"></i><h4 class="font-display font-bold text-lg">Alamat Pengiriman</h4><span class="text-[10px] font-bold px-2 py-0.5 bg-orange-100 text-orange-700 rounded-full">Fisik</span></div>';
+    html += '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">';
+    html += '<div><label class="text-xs font-medium text-warm mb-1 block">Nama Lengkap *</label><input id="inp-name" class="field-input w-full px-3 py-2.5 border border-cream-dark rounded-xl text-sm" placeholder="Nama penerima" value="' + form.name + '" oninput="form.name=this.value"></div>';
+    html += '<div><label class="text-xs font-medium text-warm mb-1 block">No. Telepon *</label><input id="inp-phone" class="field-input w-full px-3 py-2.5 border border-cream-dark rounded-xl text-sm" placeholder="08xxxxxxxxxx" value="' + form.phone + '" oninput="form.phone=this.value"></div>';
+    html += '<div class="sm:col-span-2"><label class="text-xs font-medium text-warm mb-1 block">Alamat Lengkap *</label><textarea id="inp-address" class="field-input w-full px-3 py-2.5 border border-cream-dark rounded-xl text-sm resize-none" rows="2" placeholder="Jalan, nomor rumah, RT/RW" oninput="form.address=this.value">' + form.address + '</textarea></div>';
+    html += '<div><label class="text-xs font-medium text-warm mb-1 block">Kota *</label><input id="inp-city" class="field-input w-full px-3 py-2.5 border border-cream-dark rounded-xl text-sm" placeholder="Kota/Kabupaten" value="' + form.city + '" oninput="form.city=this.value"></div>';
+    html += '<div><label class="text-xs font-medium text-warm mb-1 block">Kode Pos *</label><input id="inp-postal" class="field-input w-full px-3 py-2.5 border border-cream-dark rounded-xl text-sm" placeholder="12345" value="' + form.postal + '" oninput="form.postal=this.value"></div>';
+    html += '</div><p id="err-shipping" class="text-red-500 text-xs mt-2 hidden"></p>';
+    html += '<h5 class="font-semibold text-sm mt-5 mb-3">Pilih Kurir *</h5><div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="courierList">';
+    couriers.forEach(function(c) {
+      html += '<div onclick="selectCourier(\'' + c.id + '\')" class="radio-card flex items-center justify-between p-3 border border-cream-dark rounded-xl ' + (form.courier===c.id?'selected':'') + '"><div class="flex items-center gap-3"><div class="radio-dot w-4 h-4 rounded-full border-2 border-cream-dark flex-shrink-0"></div><div><p class="text-sm font-medium">' + c.name + '</p><p class="text-[11px] text-warm">Estimasi ' + c.est + '</p></div></div><span class="text-sm font-bold text-primary">' + formatRupiah(c.cost) + '</span></div>';
+    });
+    html += '</div><p id="err-courier" class="text-red-500 text-xs mt-2 hidden"></p></div>';
+  }
+  if (hd) {
+    html += '<div class="' + (hp?'pt-6 border-t border-cream-dark':'') + '"><div class="flex items-center gap-2 mb-4"><i class="fas fa-envelope text-primary"></i><h4 class="font-display font-bold text-lg">Email Pengiriman Digital</h4><span class="text-[10px] font-bold px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full">Digital</span></div>';
+    html += '<div class="max-w-md"><label class="text-xs font-medium text-warm mb-1 block">Alamat Email *</label><input id="inp-email" type="email" class="field-input w-full px-3 py-2.5 border border-cream-dark rounded-xl text-sm" placeholder="nama@email.com" value="' + form.email + '" oninput="form.email=this.value"></div>';
+    html += '<p id="err-email" class="text-red-500 text-xs mt-2 hidden"></p>';
+    html += '<p class="text-xs text-warm mt-2"><i class="fas fa-info-circle mr-1"></i>Link unduh dan akses buku digital akan dikirim ke email ini.</p></div>';
+  }
+  html += '<div class="flex items-center justify-between mt-8 pt-4 border-t border-cream-dark"><button onclick="goStep(1)" class="px-5 py-2.5 border border-cream-dark text-warm hover:border-primary hover:text-primary rounded-xl text-sm font-medium transition-colors"><i class="fas fa-arrow-left mr-2"></i>Kembali</button><button onclick="validateAndGoStep3()" class="px-8 py-3 bg-primary hover:bg-primary-light text-white font-semibold rounded-xl transition-colors">Lanjut ke Pembayaran <i class="fas fa-arrow-right ml-2 text-sm"></i></button></div></div>';
+  return html;
+}
+
+function renderStep3() {
+  var html = '<div class="p-6"><h4 class="font-display font-bold text-lg mb-4">Metode Pembayaran</h4>';
+  html += '<div class="flex gap-2 mb-5">';
+  html += '<button onclick="selectPayType(\'va\')" class="flex-1 py-2.5 rounded-xl text-sm font-semibold border-2 transition-all ' + (form.payType==='va'?'border-primary bg-primary/5 text-primary':'border-cream-dark text-warm hover:border-primary/30') + '"><i class="fas fa-building-columns mr-1.5"></i>Virtual Account</button>';
+  html += '<button onclick="selectPayType(\'ewallet\')" class="flex-1 py-2.5 rounded-xl text-sm font-semibold border-2 transition-all ' + (form.payType==='ewallet'?'border-primary bg-primary/5 text-primary':'border-cream-dark text-warm hover:border-primary/30') + '"><i class="fas fa-wallet mr-1.5"></i>E-Wallet</button>';
+  html += '</div><div id="payMethodList">';
+  if (form.payType === 'va') {
+    vaMethods.forEach(function(m) {
+      html += '<div onclick="selectPayMethod(\'' + m.id + '\')" class="radio-card flex items-center gap-3 p-3.5 border border-cream-dark rounded-xl mb-2 ' + (form.payMethod===m.id?'selected':'') + '"><div class="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-xs" style="background:' + m.color + '">' + m.id.toUpperCase() + '</div><div class="radio-dot w-4 h-4 rounded-full border-2 border-cream-dark flex-shrink-0"></div><span class="text-sm font-medium flex-1">' + m.name + '</span></div>';
+    });
+  } else if (form.payType === 'ewallet') {
+    ewalletMethods.forEach(function(m) {
+      html += '<div onclick="selectPayMethod(\'' + m.id + '\')" class="radio-card flex items-center gap-3 p-3.5 border border-cream-dark rounded-xl mb-2 ' + (form.payMethod===m.id?'selected':'') + '"><div class="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-xs" style="background:' + m.color + '">' + m.id.toUpperCase().substring(0,4) + '</div><div class="radio-dot w-4 h-4 rounded-full border-2 border-cream-dark flex-shrink-0"></div><span class="text-sm font-medium flex-1">' + m.name + '</span></div>';
+    });
+  } else {
+    html += '<div class="text-center py-10 text-warm"><i class="fas fa-credit-card text-3xl mb-3 opacity-20"></i><p class="text-sm">Pilih tipe pembayaran di atas</p></div>';
+  }
+  html += '</div><p id="err-pay" class="text-red-500 text-xs mt-1 hidden"></p>';
+  html += '<div class="bg-cream rounded-xl p-4 mt-6"><h5 class="font-semibold text-sm mb-3">Ringkasan Pembayaran</h5><div class="space-y-2 text-sm">';
+  html += '<div class="flex justify-between"><span class="text-warm">Subtotal (' + cart.reduce(function(s,i){return s+i.qty;},0) + ' item)</span><span class="font-medium">' + formatRupiah(getSubtotal()) + '</span></div>';
+  if (cartHasPhysical()) { var cName = form.courier ? couriers.find(function(c){return c.id===form.courier;}).name : ''; html += '<div class="flex justify-between"><span class="text-warm">Ongkos Kirim' + (cName ? ' (' + cName + ')' : '') + '</span><span class="font-medium">' + (form.courier ? formatRupiah(getShippingCost()) : '-') + '</span></div>'; }
+  html += '<div class="flex justify-between pt-2 border-t border-cream-dark"><span class="font-semibold">Total</span><span class="font-bold text-lg text-primary">' + formatRupiah(getTotal()) + '</span></div></div></div>';
+  html += '<div class="flex items-center justify-between mt-6"><button onclick="goStep(2)" class="px-5 py-2.5 border border-cream-dark text-warm hover:border-primary hover:text-primary rounded-xl text-sm font-medium transition-colors"><i class="fas fa-arrow-left mr-2"></i>Kembali</button><button onclick="validateAndPlaceOrder()" class="px-8 py-3 bg-accent hover:bg-accent-light text-white font-semibold rounded-xl transition-colors shadow-lg shadow-accent/25"><i class="fas fa-lock mr-2 text-sm"></i>Bayar Sekarang</button></div></div>';
+  return html;
+}
+
+function renderStep4(hp, hd) {
+  var payLabel = form.payType === 'va' ? vaMethods.find(function(m){return m.id===form.payMethod;}).name : ewalletMethods.find(function(m){return m.id===form.payMethod;}).name;
+  var html = '<div class="p-6 max-w-lg mx-auto text-center">';
+  html += '<div class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-5"><svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="none" stroke="#10b981" stroke-width="2.5" stroke-dasharray="113" style="animation: checkDraw 0.6s ease forwards; stroke-dashoffset: 113;"/><polyline points="12,20 18,26 28,14" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="30" style="animation: checkDraw 0.4s 0.4s ease forwards; stroke-dashoffset: 30;"/></svg></div>';
+  html += '<h4 class="font-display font-bold text-2xl mb-2">Pesanan Berhasil</h4><p class="text-warm text-sm mb-5">Silakan selesaikan pembayaran sesuai instruksi di bawah</p>';
+  html += '<div class="bg-cream rounded-xl p-4 text-left mb-5"><div class="flex justify-between text-sm mb-1"><span class="text-warm">No. Pesanan</span><span class="font-bold text-primary">' + orderNumber + '</span></div><div class="flex justify-between text-sm mb-1"><span class="text-warm">Metode</span><span class="font-medium">' + payLabel + '</span></div><div class="flex justify-between text-sm"><span class="text-warm">Total Bayar</span><span class="font-bold text-primary text-lg">' + formatRupiah(getTotal()) + '</span></div></div>';
+  if (form.payType === 'va') {
+    html += '<div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-5 text-left"><p class="text-sm font-medium text-blue-800 mb-2"><i class="fas fa-building-columns mr-1.5"></i>Nomor Virtual Account</p><div class="flex items-center gap-2"><code class="text-2xl font-bold text-blue-900 tracking-wider flex-1">' + vaNumber + '</code><button onclick="copyVA()" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg transition-colors"><i class="fas fa-copy mr-1"></i>Salin</button></div><p class="text-xs text-blue-600 mt-2">Transfer sesuai nominal di atas sebelum batas waktu 24 jam.</p></div>';
+  } else {
+    html += '<div class="bg-purple-50 border border-purple-200 rounded-xl p-4 mb-5 text-left"><p class="text-sm font-medium text-purple-800 mb-2"><i class="fas fa-mobile-screen mr-1.5"></i>Pembayaran via ' + payLabel + '</p><p class="text-xs text-purple-600">Buka aplikasi <strong>' + payLabel + '</strong>, pilih menu "Bayar", scan QR code atau masukkan nomor pesanan <strong>' + orderNumber + '</strong>, lalu konfirmasi pembayaran.</p></div>';
+  }
+  if (hp) { html += '<div class="bg-orange-50 border border-orange-200 rounded-xl p-3 mb-5 text-left text-sm"><i class="fas fa-truck text-orange-500 mr-1.5"></i><span class="text-orange-800"><strong>Pengiriman Fisik:</strong> ' + couriers.find(function(c){return c.id===form.courier;}).name + ' ke ' + form.city + ' (' + form.address.substring(0,40) + '...)</span></div>'; }
+  if (hd) { html += '<div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-5 text-left text-sm"><i class="fas fa-envelope text-emerald-500 mr-1.5"></i><span class="text-emerald-800"><strong>Produk Digital:</strong> Akses akan dikirim ke ' + form.email + '</span></div>'; }
+  html += '<button onclick="finishOrder()" class="w-full py-3 bg-primary hover:bg-primary-light text-white font-semibold rounded-xl transition-colors">Kembali ke Toko</button></div>';
+  return html;
+}
+
+function goStep(n) { checkoutStep = n; renderCheckout(); }
+function selectCourier(id) { form.courier = id; var cards = document.querySelectorAll('#courierList .radio-card'); cards.forEach(function(el) { el.classList.toggle('selected', el.getAttribute('onclick').indexOf(id) !== -1); }); var err = document.getElementById('err-courier'); if (err) err.classList.add('hidden'); }
+function selectPayType(type) { form.payType = type; form.payMethod = ''; renderCheckout(); }
+function selectPayMethod(id) { form.payMethod = id; var cards = document.querySelectorAll('#payMethodList .radio-card'); cards.forEach(function(el) { el.classList.toggle('selected', el.getAttribute('onclick').indexOf(id) !== -1); }); var err = document.getElementById('err-pay'); if (err) err.classList.add('hidden'); }
+
+function showFieldError(inputId, errId, msg) { var inp = document.getElementById(inputId); var err = document.getElementById(errId); if (inp) inp.classList.add('has-error'); if (err) { err.textContent = msg; err.classList.remove('hidden'); } }
+function clearFieldErrors() { document.querySelectorAll('.has-error').forEach(function(el) { el.classList.remove('has-error'); }); ['err-shipping','err-courier','err-email','err-pay'].forEach(function(id) { var el = document.getElementById(id); if (el) { el.textContent = ''; el.classList.add('hidden'); } }); }
+
+function validateAndGoStep3() {
+  clearFieldErrors(); var valid = true; var hp = cartHasPhysical(), hd = cartHasDigital();
+  if (hp) {
+    if (!form.name.trim()) { showFieldError('inp-name','err-shipping','Nama penerima wajib diisi'); valid = false; }
+    else if (!form.phone.trim()) { showFieldError('inp-phone','err-shipping','No. telepon wajib diisi'); valid = false; }
+    else if (!form.address.trim()) { showFieldError('inp-address','err-shipping','Alamat lengkap wajib diisi'); valid = false; }
+    else if (!form.city.trim()) { showFieldError('inp-city','err-shipping','Kota wajib diisi'); valid = false; }
+    else if (!form.postal.trim()) { showFieldError('inp-postal','err-shipping','Kode pos wajib diisi'); valid = false; }
+    if (!form.courier) { var e = document.getElementById('err-courier'); if(e){e.textContent='Pilih kurir pengiriman';e.classList.remove('hidden');} valid = false; }
+  }
+  if (hd) { if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) { showFieldError('inp-email','err-email','Masukkan alamat email yang valid'); valid = false; } }
+  if (valid) goStep(3);
+}
+
+function validateAndPlaceOrder() {
+  clearFieldErrors();
+  if (!form.payType || !form.payMethod) { var e = document.getElementById('err-pay'); if(e){e.textContent='Pilih metode pembayaran';e.classList.remove('hidden');} return; }
+  orderNumber = generateOrderNum();
+  vaNumber = form.payType === 'va' ? generateVA(form.payMethod) : '';
+  checkoutStep = 4; renderCheckout();
+}
+
+function copyVA() { navigator.clipboard.writeText(vaNumber).then(function() { showToast('Nomor VA berhasil disalin', 'success'); }).catch(function() { showToast('Gagal menyalin', 'error'); }); }
+function finishOrder() { cart = []; updateCartUI(); form = { name:'', phone:'', address:'', city:'', postal:'', courier:'', email:'', payType:'', payMethod:'' }; closeCheckout(); showToast('Terima kasih! Pesanan Anda sedang diproses.', 'success'); }
+function handleSearch(val) { searchQuery = val; renderProducts(); }
+
+function showToast(msg, type) {
+  type = type || 'info';
+  var container = document.getElementById('toastContainer');
+  var toast = document.createElement('div');
+  var colors = { success:'bg-emerald-600', error:'bg-red-600', info:'bg-primary' };
+  var icons = { success:'fa-check-circle', error:'fa-exclamation-circle', info:'fa-info-circle' };
+  toast.className = 'toast-in ' + (colors[type]||colors.info) + ' text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2.5 text-sm font-medium max-w-xs';
+  toast.innerHTML = '<i class="fas ' + (icons[type]||icons.info) + '"></i><span>' + msg + '</span>';
+  container.appendChild(toast);
+  setTimeout(function() { toast.classList.remove('toast-in'); toast.classList.add('toast-out'); setTimeout(function() { toast.remove(); }, 300); }, 3000);
+}
+
+renderCategories();
+renderProducts();
+renderCartItems();
+</script>
+</body>
+</html>
